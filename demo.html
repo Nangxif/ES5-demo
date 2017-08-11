@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+	<div id="app">
+		<div class="container">
+			<div class="jumbotron">
+	  			<h1>A Demo!</h1>
+	  			<p>Let's play a demo</p>
+	 			 <p><a class="btn btn-primary btn-lg" href="#" role="button" v-link="{path:'/play'}">play</a></p>
+			</div>
+		</div>
+		<router-view></router-view>	
+	</div>
+	<template id="play">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-2 col-md-offset-2">
+					<div class="list-group">
+						<a class="list-group-item" v-link="{path:'/play/home'}">Home</a>
+						<a class="list-group-item" v-link="{path:'/play/about'}">About</a>	
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel">
+						<div class="panel-body">
+							<router-view></router-view>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</template>
+	<template id="home">
+		<div>
+			<h1>Home</h1>
+			<p>{{msg1}}<a class="btn" v-link="{path:'/play/home/time'}">获取当前日期</a></p>
+		</div>
+		<router-view></router-view>
+	</template>
+	<template id="time">
+		<table class="table table-striped">
+			<tr>
+				<td>年份</td>
+				<td>月份</td>
+				<td>日</td>
+			</tr>
+			<tr v-for="t in dates">
+				<td>{{t.year}}</td>
+				<td>{{t.month}}</td>
+				<td>{{t.day}}</td>
+			</tr>
+		</table>
+	</template>
+	<template id="about">
+		<div>
+			<h1>About</h1>
+			<p>{{msg2}}</p>
+		</div>
+	</template>
+</body>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="vue.min.js"></script>
+<script src="vue-router.js"></script>
+<script type="text/javascript">
+	var Play=Vue.extend({
+		template:'#play'
+	})
+	var Home=Vue.extend({
+		template:'#home',
+		data:function(){
+			return{
+				msg1:'This is Home page!'
+			}
+		}
+	})
+	var Time=Vue.extend({
+		template:'#time',
+		data:function(){
+			var D = new Date();
+			return{
+				dates:[{
+					year:D.getFullYear(),
+					month:D.getMonth()+1,
+					day:D.getDate()
+				}]
+			}
+		}
+	})
+	var About=Vue.extend({
+		template:'#about',
+		data:function(){
+			return{
+				msg2:'This is About page!'
+			}
+		}
+	})
+	var router=new VueRouter();
+	router.map({
+		'/play':{
+			component:Play,
+			subRoutes: {
+				'/home':{
+					component:Home,
+					subRoutes:{
+						'/time':{
+							component:Time
+						}
+					}
+				},
+				'/about':{
+					component:About
+				}
+			}
+		}
+	})
+	var App=Vue.extend({})
+	router.start(App,'#app')
+</script>
+</html>
